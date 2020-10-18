@@ -1,4 +1,5 @@
 import React from 'react';
+import {makeStyles} from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,9 +7,24 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import Select from '@material-ui/core/Select'
+import Paper from '@material-ui/core/Paper'
+
 import './App.css';
 import './index.css';
+
+const useStyles = makeStyles((theme) =>({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}))
 /* ----- Components -------- */
 class Selector extends React.Component {
   render() {
@@ -16,6 +32,8 @@ class Selector extends React.Component {
     const conversion = this.props.Conversion;
     const rates = Object.entries(this.props.Rates);
     const filtered = rates.filter(item => item[0] !== this.props.baseCurrency)
+    //const classes = useStyles();
+
     if (error) {
       return <div>Error: {error.message}</div>
     } else if (!isLoaded) {
@@ -25,18 +43,18 @@ class Selector extends React.Component {
 
       <Container>
         <form>
-          <label htmlFor="Base Currency">Base Currency</label>
+          <label htmlFor="quantity">Quantity</label>
+          <input type="number" name="quantity" id="quantity" onChange={this.props.onQuantityChange}/>
+          
+          <label htmlFor="Base Currency">From</label>
           <select name="BaseCurrency" id="currency" value={this.props.currency} onChange={this.props.onBaseCurrencyChange}>
             <option value={this.props.baseCurrency}>{this.props.baseCurrency}</option>
             {rates.map(symbol => (
               <option value={symbol[0]} key={symbol[0]}>{symbol[0]}</option>
             ))}
           </select>
-
-          <label htmlFor="quantity">Quantity</label>
-          <input type="number" name="quantity" id="quantity" onChange={this.props.onQuantityChange}/>
             
-          <label htmlFor="Desired Currency"></label>
+          <label htmlFor="Desired Currency">To</label>
           <select name="desiredCurrency" id="currency" value={this.props.currency} onChange={this.props.onTargetCurrencyChange}>
             {filtered.map(symbol => (
               <option value={symbol[1]} key={symbol[0]}>{symbol[0]}</option>
@@ -46,6 +64,22 @@ class Selector extends React.Component {
           <input type="button" value= "Calculate" onClick={ this.props.convertCurrency} />
         </form>
             <p>{conversion}</p>
+
+        <FormControl>
+          <InputLabel shrink id='fromCurrencyLabel'>From</InputLabel>
+          <Select 
+          labelId='fromCurrencyLabel' 
+          id="fromCurrency" 
+          value={this.props.currency} 
+          onChange={this.props.onBaseCurrencyChange}
+          >
+            <MenuItem value={this.props.baseCurrency}>{this.props.baseCurrency}</MenuItem>
+            {filtered.map(symbol => (
+              <MenuItem value={symbol[1]} key={symbol[0]}>{symbol[0]}</MenuItem>
+            ))}
+          </Select>
+
+        </FormControl>
       </Container>
       
     )
